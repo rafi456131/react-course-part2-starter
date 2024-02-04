@@ -1,34 +1,44 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-
-interface Post {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-}
+import React from "react";
+import usePosts from "../hooks/usePosts";
 
 const PostList = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState('');
+  // const [userId, setUserId] = useState<number>();
+  const pageSize = 10;
+  const { data, error, fetchNextPage, isFetchingNextPage } = usePosts({
+    pageSize,
+  });
 
-  useEffect(() => {
-    axios
-      .get('https://jsonplaceholder.typicode.com/posts')
-      .then((res) => setPosts(res.data))
-      .catch((error) => setError(error));
-  }, []);
-
-  if (error) return <p>{error}</p>;
+  if (error) return <p>{error.message}</p>;
 
   return (
-    <ul className="list-group">
-      {posts.map((post) => (
-        <li key={post.id} className="list-group-item">
-          {post.title}
-        </li>
-      ))}
-    </ul>
+    <>
+      {/* <select
+        className="form-select mb-3"
+        onChange={(e) => setUserId(parseInt(e.target.value))}
+        value={userId}
+      >
+        <option value=""></option>
+        <option value="1">user1</option>
+        <option value="2">user2</option>
+        <option value="3">user3</option>
+      </select> */}
+      {console.log(data?.pages)}
+      <ul className="list-group"></ul>
+      <button
+        disabled={isFetchingNextPage}
+        className="btn btn-primary my-3 "
+        onClick={() => fetchNextPage()}
+      >
+        LoadMore
+      </button>
+      {/* 
+      <button
+        className="btn btn-primary my-3 ms-2"
+        onClick={() => setPage(page + 1)}
+      >
+        Next
+      </button> */}
+    </>
   );
 };
 
